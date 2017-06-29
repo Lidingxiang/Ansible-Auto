@@ -1,0 +1,5 @@
+---
+  jexusDataSavePath: "/root/jexusDataSource"
+  jexusReleaseNo: "jexus-5.8.2"
+  jexusInstallPath: "/usr/jexus"
+  jexusPublishPath: "/var/www"

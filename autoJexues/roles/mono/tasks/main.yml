@@ -1,0 +1,8 @@
+---
+- name: 是否安装了mono
+  shell: "mono -V"
+  register: mono_envir
+  ignore_errors: true
+- name: 为没安装的安装mono
+  include: install.yml
+  when: "'command not found' in mono_envir.stderr"

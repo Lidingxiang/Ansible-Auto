@@ -1,0 +1,4 @@
+172.18.101.192 ansible_user=root ansible_password=ldx123
+172.18.101.195 ansible_user=root ansible_password=ldx123
+172.18.101.197 ansible_user=root ansible_password=ldx123
+

@@ -1,0 +1,38 @@
+---
+- name: 安装python-setuptools
+  yum: 
+    name: python-setuptools
+- name: 安装supervisor
+  shell: easy_install supervisor
+- name: 配置安装命令到目标机
+  template: 
+    src: "execcmd.js.j2"
+    dest: /tmp/execcmd.js.j2
+- name: 配置supervisor环境
+  shell: |
+    python < /tmp/execcmd.js.j2
+- name: 创建服务配置目录
+  file: 
+    path: "/etc/supervisor"
+    state: directory
+    mode: 0755
+- name: 生成配置文件
+  template: 
+    src: "supervisord.conf"
+    dest: /etc
+    mode: 0755
+- name: 启动supevisord服务
+  shell: supervisord -c /etc/supervisord.conf
+- name: 修改supervisord.conf中的nodaemon
+  lineinfile: 
+    dest: /etc/supervisord.conf
+    regexp: '^nodaemon'
+    line: 'nodaemon=true'
+- name: 配置开机自启动服务
+  template: 
+    src: "supervisord.service"
+    dest: /lib/systemd/system
+    mode: 0755
+- name: 设置开机自启动
+  shell: |
+    systemctl enable supervisord.service

@@ -1,0 +1,8 @@
+---
+- name: 判断是否安装了mongodb
+  shell: "systemctl is-enabled mongod"
+  register: mongodb_service
+  ignore_errors: true
+- name: 安装mongodb
+  include: install.yml
+  when: "'No such file' in mongodb_service.stderr"

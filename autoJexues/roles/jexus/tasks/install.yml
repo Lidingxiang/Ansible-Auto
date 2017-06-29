@@ -1,0 +1,38 @@
+---
+- name: 创建存放安装源码的目录
+  file: 
+    path: "{{ jexusDataSavePath }}"
+    state: directory
+    mode: 0755
+- name: 拷贝jexus文件到目标计算机
+  copy: 
+    src: "../files/{{ jexusReleaseNo }}.tar.gz"
+    dest: "{{ jexusDataSavePath }}"
+- name: 创建jexus安装目录
+  file: 
+    path: "{{ jexusInstallPath }}"
+    state: directory
+    mode: 0755
+- name: 解压目标机器压缩文件jexus
+  unarchive:
+    src: "{{ jexusDataSavePath }}/{{ jexusReleaseNo }}.tar.gz"
+    dest: "{{ jexusInstallPath }}"
+    remote_src: true
+- name: 创建存放发布项目目录
+  file: 
+    path: "{{ jexusPublishPath }}"
+    state: directory
+    mode: 0755
+- name: 启动服务
+  shell: |
+    cd {{ jexusInstallPath }}/{{ jexusReleaseNo }}/data/
+    ./jws start
+- name: 配置开机启动脚本
+  template: 
+    src: "jexus.service"
+    dest: /lib/systemd/system
+    mode: 0755
+- name: 设置服务开机自启动
+  shell: |
+    systemctl enable jexus.service
+

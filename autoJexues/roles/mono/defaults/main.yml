@@ -1,0 +1,4 @@
+---
+  monoDataSavePath: "/root/monoDataSource"
+  libgdiplusReleaseNo: "libgdiplus-4.2"
+  monoReleaseNo: "mono-5.0.1.1"

@@ -1,0 +1,57 @@
+---
+- name: 创建存放安装源码的目录
+  file: 
+    path: "{{ monoDataSavePath }}"
+    state: directory
+    mode: 0755
+- name: 拷贝libgdiplus文件到目标计算机
+  copy: 
+    src: "../files/{{ libgdiplusReleaseNo }}.tar.gz"
+    dest: "{{ monoDataSavePath }}"
+- name: 拷贝mono文件到目标计算机
+  copy: 
+    src: "../files/{{ monoReleaseNo }}.tar.bz2"
+    dest: "{{ monoDataSavePath }}"
+- name: 解压目标机器压缩文件libgdiplus
+  unarchive:
+    src: "{{ monoDataSavePath }}/{{ libgdiplusReleaseNo }}.tar.gz"
+    dest: "{{ monoDataSavePath }}"
+    remote_src: true
+- name: 解压目标机器压缩文件mono
+  unarchive:
+    src: "{{ monoDataSavePath }}/{{ monoReleaseNo }}.tar.bz2"
+    dest: "{{ monoDataSavePath }}"
+    remote_src: true
+- name: 安装mono源码安装需要的库
+  yum: name={{ item }}
+  with_items:
+    - gcc 
+    - gcc-c++ 
+    - bison 
+    - pkgconfig 
+    - glib2-devel 
+    - gettext 
+    - make 
+    - libpng-devel 
+    - libjpeg-devel 
+    - libtiff-devel 
+    - libexif-devel 
+    - giflib-devel 
+    - libX11-devel 
+    - freetype-devel 
+    - fontconfig-devel  
+    - cairo-devel
+    - cmake
+- name: 安装libgdiplus
+  shell: |
+    cd {{ monoDataSavePath }}/{{ libgdiplusReleaseNo }}/
+    ./configure --prefix=/usr
+    make 
+    make install
+- name: 安装mono
+  shell: |
+    cd {{ monoDataSavePath }}/{{ monoReleaseNo }}/
+    ./configure --prefix=/usr
+    make
+    make install
+    

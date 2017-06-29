@@ -1,0 +1,8 @@
+---
+- name: 是否安装了supervisor
+  shell: "systemctl is-enabled supervisord"
+  register: supervisord_service
+  ignore_errors: true
+- name: 为没安装的安装supervisor
+  include: install.yml
+  when: "'No such file or directory' in supervisord_service.stderr"

@@ -1,0 +1,8 @@
+--- 
+- name: 是否安装了jexus
+  shell: "netstat -antp | grep jexus"
+  register: jexus_envir
+  ignore_errors: true
+- name: 为没安装的安装jexus
+  include: install.yml
+  when: "'' in jexus_envir.stderr"

@@ -1,0 +1,13 @@
+[Unit]
+Description=jexus
+After=network.target
+
+[Service]
+Type=forking
+ExecStart={{ jexusInstallPath }}/{{ jexusReleaseNo }}/data/jws start
+ExecReload={{ jexusInstallPath }}/{{ jexusReleaseNo }}/data/jws restart
+ExecStop={{ jexusInstallPath }}/{{ jexusReleaseNo }}/data/jws stop
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

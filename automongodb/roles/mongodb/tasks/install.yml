@@ -1,0 +1,42 @@
+---
+- name: 添加mongodb的yum配置文件
+  template: 
+    src: "mongodb-org-3.2.repo"
+    dest: /etc/yum.repos.d
+- name: 更新mongodb的yum配置文件
+  shell:  yum list Mongodb*
+  run_once: true
+- name: 安装mongodb
+  yum: name={{ item }}  
+  with_items: 
+    - mongodb-org-server.x86_64
+    - mongodb-org-shell.x86_64
+    - mongodb-org-tools.x86_64
+- name: 修改配置文件mongod.conf
+  template: 
+    src: mongod.conf
+    dest:  /etc
+- name: 设置服务为自启动
+  service: 
+    name: mongod
+    enabled: yes
+- name: 启动服务
+  service: 
+    name: mongod
+    state: restarted
+- block:
+  - name: 复制集群配置文件到目标机
+    template: 
+      src: repset.js.j2
+      dest: /tmp/ansible_mongodb_repset.js
+- name: 执行集群配置文件
+  shell: |
+    /bin/mongo {{ groups.all[0] }}:27017 < /tmp/ansible_mongodb_repset.js
+  when: ansible_all_ipv4_addresses[0]==groups.all[0]
+  run_once: true
+- name: 复制设置从节点可读文件到目标机
+  template: 
+    src: setslave.js.j2
+    dest: /tmp/setslave.js
+- name: 执行设置从节点可读脚本
+  shell: /bin/mongo {{ ansible_all_ipv4_addresses[0] }}:27017 < /tmp/setslave.js
